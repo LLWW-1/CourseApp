@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class DeleteActivity extends AppCompatActivity {
     private DBHelper dbHelper;
-    private EditText courseIdEditText;
+    private EditText courseNameEditText;
     private Button deleteButton;
     private int currentUserId;
 
@@ -23,38 +23,34 @@ public class DeleteActivity extends AppCompatActivity {
 
         currentUserId = getIntent().getIntExtra("user_id", -1);
         dbHelper = new DBHelper(this);
-        courseIdEditText = findViewById(R.id.course_id_edit_text);
+        courseNameEditText = findViewById(R.id.course_name_edit_text); // 修改布局引用
         deleteButton = findViewById(R.id.delete_button);
 
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String courseIdStr = courseIdEditText.getText().toString();
-                if (courseIdStr.isEmpty()) {
-                    Toast.makeText(DeleteActivity.this, "请输入课程ID", Toast.LENGTH_SHORT).show();
-                    return;
+        deleteButton.setOnClickListener(v -> {
+            String courseName = courseNameEditText.getText().toString();
+            if (courseName.isEmpty()) {
+                Toast.makeText(this, "请输入课程名称", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            try {
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                String whereClause = "course_name =? AND user_id =?";
+                String[] whereArgs = {courseName, String.valueOf(currentUserId)};
+
+                int rowsDeleted = db.delete("Course", whereClause, whereArgs);
+                db.close();
+
+                if (rowsDeleted > 0) {
+                    Toast.makeText(this, "课程删除成功", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(this, MainActivity.class));
+                    finish();
+                } else {
+                    Toast.makeText(this, "未找到该课程或无权限删除", Toast.LENGTH_SHORT).show();
                 }
-
-                try {
-                    int courseId = Integer.parseInt(courseIdStr);
-                    SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-                    String whereClause = "id =? AND user_id =?";
-                    String[] whereArgs = {String.valueOf(courseId), String.valueOf(currentUserId)};
-
-                    int rowsDeleted = db.delete("Course", whereClause, whereArgs);
-                    db.close();
-
-                    if (rowsDeleted > 0) {
-                        Toast.makeText(DeleteActivity.this, "课程删除成功", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(DeleteActivity.this, MainActivity.class));
-                        finish();
-                    } else {
-                        Toast.makeText(DeleteActivity.this, "未找到该课程ID或无权限删除", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (NumberFormatException e) {
-                    Toast.makeText(DeleteActivity.this, "请输入有效的课程ID", Toast.LENGTH_SHORT).show();
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "删除失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

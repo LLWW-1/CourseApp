@@ -124,14 +124,16 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Calendar calendar = Calendar.getInstance();
         int today = calendar.get(Calendar.DAY_OF_WEEK);
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        String currentTime = sdf.format(calendar.getTime());
+        // 将Calendar.DAY_OF_WEEK的返回值转换为与ViewActivity一致的星期对应关系
+        if (today == Calendar.SUNDAY) {
+            today = 7;
+        } else {
+            today = today - 1;
+        }
 
-        // 注意：这里查询的是"正在进行"的课程，可能导致没有数据
-        // 如果需要显示全天课程，应修改查询条件
         String[] columns = {"id", "course_name", "teacher_name", "start_time", "end_time", "location"};
-        String selection = "user_id =? AND weekday =? AND start_time <=? AND end_time >=?";
-        String[] selectionArgs = {String.valueOf(currentUserId), String.valueOf(today), currentTime, currentTime};
+        String selection = "user_id =? AND weekday =?";
+        String[] selectionArgs = {String.valueOf(currentUserId), String.valueOf(today)};
         Cursor cursor = db.query("Course", columns, selection, selectionArgs, null, null, "start_time");
 
         todayCourses.clear();
@@ -148,9 +150,8 @@ public class MainActivity extends AppCompatActivity {
         cursor.close();
         db.close();
 
-        // 检查是否有课程数据
         if (todayCourses.isEmpty()) {
-            Toast.makeText(this, "今日没有正在进行的课程", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "今日没有课程", Toast.LENGTH_SHORT).show();
         }
 
         courseAdapter = new CourseAdapter(this, todayCourses);

@@ -58,19 +58,19 @@ public class ViewActivity extends AppCompatActivity {
     private int getWeekdayNumber(String weekday) {
         switch (weekday) {
             case "周一":
-                return 2;
-            case "周二":
-                return 3;
-            case "周三":
-                return 4;
-            case "周四":
-                return 5;
-            case "周五":
-                return 6;
-            case "周六":
-                return 7;
-            case "周日":
                 return 1;
+            case "周二":
+                return 2;
+            case "周三":
+                return 3;
+            case "周四":
+                return 4;
+            case "周五":
+                return 5;
+            case "周六":
+                return 6;
+            case "周日":
+                return 7;
             default:
                 return 0;
         }
