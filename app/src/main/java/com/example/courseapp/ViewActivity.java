@@ -1,0 +1,78 @@
+package com.example.courseapp;
+
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class ViewActivity extends AppCompatActivity {
+    private DBHelper dbHelper;
+    private int currentUserId;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_view);
+
+        currentUserId = getIntent().getIntExtra("user_id", -1);
+        dbHelper = new DBHelper(this);
+        displayCourseTable();
+    }
+
+    private void displayCourseTable() {
+        TableLayout tableLayout = findViewById(R.id.course_table);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String[] weekdays = {"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
+        for (String weekday : weekdays) {
+            TableRow row = new TableRow(this);
+            TextView weekdayTextView = new TextView(this);
+            weekdayTextView.setText(weekday);
+            row.addView(weekdayTextView);
+
+            String[] columns = {"course_name", "teacher_name", "start_time", "end_time", "location"};
+            String selection = "user_id =? AND weekday =?";
+            String[] selectionArgs = {String.valueOf(currentUserId), String.valueOf(getWeekdayNumber(weekday))};
+            Cursor cursor = db.query("Course", columns, selection, selectionArgs, null, null, null);
+
+            while (cursor.moveToNext()) {
+                String courseName = cursor.getString(0);
+                String teacherName = cursor.getString(1);
+                String startTime = cursor.getString(2);
+                String endTime = cursor.getString(3);
+                String location = cursor.getString(4);
+                TextView courseTextView = new TextView(this);
+                courseTextView.setText(courseName + "\n教师: " + teacherName + " 时间: " + startTime + "-" + endTime + " 地点: " + location);
+                row.addView(courseTextView);
+            }
+            cursor.close();
+            tableLayout.addView(row);
+        }
+        db.close();
+    }
+
+    private int getWeekdayNumber(String weekday) {
+        switch (weekday) {
+            case "周一":
+                return 2;
+            case "周二":
+                return 3;
+            case "周三":
+                return 4;
+            case "周四":
+                return 5;
+            case "周五":
+                return 6;
+            case "周六":
+                return 7;
+            case "周日":
+                return 1;
+            default:
+                return 0;
+        }
+    }
+}
