@@ -21,12 +21,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DeleteActivity"> </activity>
-        <activity android:name=".RegisterActivity"> </activity>
-        <activity android:name=".ViewActivity"> </activity>
-        <activity android:name=".ChangeActivity"> </activity>
-        <activity android:name=".AddActivity"> </activity>
-        <activity android:name=".MainActivity"> </activity>
+        <activity android:name=".DeleteActivity"></activity>
+        <activity android:name=".RegisterActivity"></activity>
+        <activity android:name=".ViewActivity"></activity>
+        <activity android:name=".ChangeActivity"></activity>
+        <activity android:name=".AddActivity"></activity>
+        <activity android:name=".MainActivity"></activity>
     </application>
 
 </manifest>

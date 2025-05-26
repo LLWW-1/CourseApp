@@ -11,14 +11,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class ViewActivity extends AppCompatActivity {
     private DBHelper dbHelper;
-    private int currentUserId;
+    private String currentUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view);
 
-        currentUserId = getIntent().getIntExtra("user_id", -1);
+        currentUsername = getIntent().getStringExtra("username");
         dbHelper = new DBHelper(this);
         displayCourseTable();
     }
@@ -35,8 +35,8 @@ public class ViewActivity extends AppCompatActivity {
             row.addView(weekdayTextView);
 
             String[] columns = {"course_name", "teacher_name", "start_time", "end_time", "location"};
-            String selection = "user_id =? AND weekday =?";
-            String[] selectionArgs = {String.valueOf(currentUserId), String.valueOf(getWeekdayNumber(weekday))};
+            String selection = "username =? AND weekday =?";
+            String[] selectionArgs = {currentUsername, String.valueOf(getWeekdayNumber(weekday))};
             Cursor cursor = db.query("Course", columns, selection, selectionArgs, null, null, null);
 
             while (cursor.moveToNext()) {

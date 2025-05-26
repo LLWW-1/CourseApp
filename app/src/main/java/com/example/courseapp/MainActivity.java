@@ -3,8 +3,11 @@ package com.example.courseapp;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import java.util.Collections;
+import java.util.Comparator;
+
+import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -12,7 +15,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -23,49 +25,27 @@ public class MainActivity extends AppCompatActivity {
     private CourseAdapter courseAdapter;
     private List<Course> todayCourses = new ArrayList<>();
     private String currentUsername;
-    private int currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 1. 先初始化DBHelper
         dbHelper = new DBHelper(this);
-
-        // 2. 获取并检查用户名
         currentUsername = getIntent().getStringExtra("username");
+
         if (currentUsername == null || currentUsername.isEmpty()) {
             Toast.makeText(this, "用户名无效，请重新登录", Toast.LENGTH_SHORT).show();
-            finish(); // 返回登录页面
+            finish();
             return;
         }
 
-        // 3. 获取用户ID
-        currentUserId = getUserId(currentUsername);
-        if (currentUserId == -1) {
-            Toast.makeText(this, "用户不存在，请重新登录", Toast.LENGTH_SHORT).show();
-            finish(); // 返回登录页面
-            return;
-        }
-
-        // 4. 设置欢迎文本
         TextView welcomeTextView = findViewById(R.id.welcome_text_view);
         welcomeTextView.setText("欢迎回来，" + currentUsername);
 
-        // 5. 初始化ListView
         courseListView = findViewById(R.id.course_list_view);
-
-        // 6. 设置按钮事件
         setupButtons();
-
-        // 7. 加载今日课程（添加异常处理）
-        try {
-            loadTodayCourses();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "加载课程失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+        loadTodayCourses();
     }
 
     private void setupButtons() {
@@ -75,27 +55,28 @@ public class MainActivity extends AppCompatActivity {
         Button deleteCourseButton = findViewById(R.id.delete_course_button);
         Button logoutButton = findViewById(R.id.logout_button);
 
+        // 统一使用"username"作为键
         viewCourseButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ViewActivity.class);
-            intent.putExtra("user_id", currentUserId);
+            intent.putExtra("username", currentUsername); // 修正为"username"
             startActivity(intent);
         });
 
         addCourseButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddActivity.class);
-            intent.putExtra("user_id", currentUserId);
+            intent.putExtra("username", currentUsername); // 修正为"username"
             startActivity(intent);
         });
 
         modifyCourseButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ChangeActivity.class);
-            intent.putExtra("user_id", currentUserId);
+            intent.putExtra("username", currentUsername); // 修正为"username"
             startActivity(intent);
         });
 
         deleteCourseButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, DeleteActivity.class);
-            intent.putExtra("user_id", currentUserId);
+            intent.putExtra("username", currentUsername); // 修正为"username"
             startActivity(intent);
         });
 
@@ -105,50 +86,50 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private int getUserId(String username) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String[] columns = {"id"};
-        String selection = "username =?";
-        String[] selectionArgs = {username};
-        Cursor cursor = db.query("User", columns, selection, selectionArgs, null, null, null);
-        int userId = -1;
-        if (cursor.moveToFirst()) {
-            userId = cursor.getInt(0);
-        }
-        cursor.close();
-        db.close();
-        return userId;
-    }
+    // 删除无用的getUserId方法
 
     private void loadTodayCourses() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Calendar calendar = Calendar.getInstance();
         int today = calendar.get(Calendar.DAY_OF_WEEK);
-        // 将Calendar.DAY_OF_WEEK的返回值转换为与ViewActivity一致的星期对应关系
+
         if (today == Calendar.SUNDAY) {
             today = 7;
         } else {
             today = today - 1;
         }
 
-        String[] columns = {"id", "course_name", "teacher_name", "start_time", "end_time", "location"};
-        String selection = "user_id =? AND weekday =?";
-        String[] selectionArgs = {String.valueOf(currentUserId), String.valueOf(today)};
+        String[] columns = {"course_name", "teacher_name", "start_time", "end_time", "location"};
+        String selection = "username =? AND weekday =?";
+        String[] selectionArgs = {currentUsername, String.valueOf(today)};
         Cursor cursor = db.query("Course", columns, selection, selectionArgs, null, null, "start_time");
 
         todayCourses.clear();
         while (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            String courseName = cursor.getString(1);
-            String teacherName = cursor.getString(2);
-            String startTime = cursor.getString(3);
-            String endTime = cursor.getString(4);
-            String location = cursor.getString(5);
-            Course course = new Course(id, currentUserId, courseName, teacherName, startTime, endTime, location, today);
+            String courseName = cursor.getString(0);
+            String teacherName = cursor.getString(1);
+            String startTime = cursor.getString(2);
+            String endTime = cursor.getString(3);
+            String location = cursor.getString(4);
+            Course course = new Course(currentUsername, courseName, teacherName, startTime, endTime, location, today);
             todayCourses.add(course);
         }
         cursor.close();
         db.close();
+
+        // 对todayCourses列表按照课程开始时间进行排序
+        Collections.sort(todayCourses, new Comparator<Course>() {
+            @Override
+            public int compare(Course course1, Course course2) {
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                try {
+                    return sdf.parse(course1.getStartTime()).compareTo(sdf.parse(course2.getStartTime()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return 0;
+                }
+            }
+        });
 
         if (todayCourses.isEmpty()) {
             Toast.makeText(this, "今日没有课程", Toast.LENGTH_SHORT).show();

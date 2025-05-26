@@ -4,8 +4,7 @@ import java.io.Serializable;
 import java.io.Serializable;
 
 public class Course implements Serializable {
-    private int id;
-    private int userId;
+    private String userName;
     private String courseName;
     private String teacherName;
     private String startTime;
@@ -13,9 +12,8 @@ public class Course implements Serializable {
     private String location;
     private int weekday;
 
-    public Course(int id, int userId, String courseName, String teacherName, String startTime, String endTime, String location, int weekday) {
-        this.id = id;
-        this.userId = userId;
+    public Course(String username,String courseName, String teacherName, String startTime, String endTime, String location, int weekday) {
+        this.userName = username;
         this.courseName = courseName;
         this.teacherName = teacherName;
         this.startTime = startTime;
@@ -24,22 +22,13 @@ public class Course implements Serializable {
         this.weekday = weekday;
     }
 
-    public int getId() {
-        return id;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUserName(String userName) {
+        this.userName=userName;
     }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
     public String getCourseName() {
         return courseName;
     }
