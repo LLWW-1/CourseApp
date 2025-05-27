@@ -62,7 +62,9 @@ public class AddActivity extends AppCompatActivity {
                 db.close();
 
                 Toast.makeText(AddActivity.this, "课程添加成功", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(AddActivity.this, MainActivity.class));
+                Intent intent=new Intent(AddActivity.this,MainActivity.class);
+                intent.putExtra("username",currentUsername);
+                startActivity(intent);
                 finish();
             }
         });

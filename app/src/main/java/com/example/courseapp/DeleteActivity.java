@@ -43,7 +43,9 @@ public class DeleteActivity extends AppCompatActivity {
 
                 if (rowsDeleted > 0) {
                     Toast.makeText(this, "课程删除成功", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(this, MainActivity.class));
+                    Intent intent=new Intent(DeleteActivity.this,MainActivity.class);
+                    intent.putExtra("username",currentUsername);
+                    startActivity(intent);
                     finish();
                 } else {
                     Toast.makeText(this, "未找到该课程或无权限删除", Toast.LENGTH_SHORT).show();

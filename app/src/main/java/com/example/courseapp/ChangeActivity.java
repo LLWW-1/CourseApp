@@ -74,7 +74,9 @@ public class ChangeActivity extends AppCompatActivity {
 
                 if (rowsAffected > 0) {
                     Toast.makeText(ChangeActivity.this, "课程修改成功", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(ChangeActivity.this, MainActivity.class));
+                    Intent intent=new Intent(ChangeActivity.this,MainActivity.class);
+                    intent.putExtra("username",currentUsername);
+                    startActivity(intent);
                     finish();
                 } else {
                     Toast.makeText(ChangeActivity.this, "未找到该课程或无权限修改", Toast.LENGTH_SHORT).show();
