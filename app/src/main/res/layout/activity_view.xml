@@ -14,15 +14,9 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="16dp"/>
 
-    <ScrollView
+    <TableLayout
+        android:id="@+id/course_table"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="完整课程表内容，可滚动查看">
-
-        <TableLayout
-            android:id="@+id/course_table"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="*"/>
-    </ScrollView>
+        android:layout_height="wrap_content">
+    </TableLayout>
 </LinearLayout>

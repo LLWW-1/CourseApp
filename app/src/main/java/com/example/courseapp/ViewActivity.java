@@ -29,10 +29,12 @@ public class ViewActivity extends AppCompatActivity {
 
         String[] weekdays = {"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
         for (String weekday : weekdays) {
-            TableRow row = new TableRow(this);
+            // 为每个星期创建一个表头行
+            TableRow headerRow = new TableRow(this);
             TextView weekdayTextView = new TextView(this);
             weekdayTextView.setText(weekday);
-            row.addView(weekdayTextView);
+            headerRow.addView(weekdayTextView);
+            tableLayout.addView(headerRow);
 
             String[] columns = {"course_name", "teacher_name", "start_time", "end_time", "location"};
             String selection = "username =? AND weekday =?";
@@ -40,6 +42,8 @@ public class ViewActivity extends AppCompatActivity {
             Cursor cursor = db.query("Course", columns, selection, selectionArgs, null, null, null);
 
             while (cursor.moveToNext()) {
+                // 为每门课程创建一个新行
+                TableRow courseRow = new TableRow(this);
                 String courseName = cursor.getString(0);
                 String teacherName = cursor.getString(1);
                 String startTime = cursor.getString(2);
@@ -47,10 +51,10 @@ public class ViewActivity extends AppCompatActivity {
                 String location = cursor.getString(4);
                 TextView courseTextView = new TextView(this);
                 courseTextView.setText(courseName + "\n教师: " + teacherName + " 时间: " + startTime + "-" + endTime + " 地点: " + location);
-                row.addView(courseTextView);
+                courseRow.addView(courseTextView);
+                tableLayout.addView(courseRow);
             }
             cursor.close();
-            tableLayout.addView(row);
         }
         db.close();
     }
