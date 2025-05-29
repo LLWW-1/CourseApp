@@ -40,9 +40,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        TextView welcomeTextView = findViewById(R.id.welcome_text_view);
-        welcomeTextView.setText("欢迎回来，" + currentUsername);
-
         courseListView = findViewById(R.id.course_list_view);
         setupButtons();
         loadTodayCourses();
