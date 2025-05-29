@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (validateLogin(username, password)) {
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra("username", username); // 传递username而非user_id
+                    intent.putExtra("username", username);
                     startActivity(intent);
                     finish();
                 } else {
@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean validateLogin(String username, String password) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String[] columns = {"username"}; // 查询username而非id
+        String[] columns = {"username"};
         String selection = "username =? AND password =?";
         String[] selectionArgs = {username, password};
         Cursor cursor = db.query("User", columns, selection, selectionArgs, null, null, null);

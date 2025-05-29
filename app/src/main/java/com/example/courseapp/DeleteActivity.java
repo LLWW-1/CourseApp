@@ -23,7 +23,7 @@ public class DeleteActivity extends AppCompatActivity {
 
         currentUsername = getIntent().getStringExtra("username");
         dbHelper = new DBHelper(this);
-        courseNameEditText = findViewById(R.id.course_name_edit_text); // 修改布局引用
+        courseNameEditText = findViewById(R.id.course_name_edit_text);
         deleteButton = findViewById(R.id.delete_button);
 
         deleteButton.setOnClickListener(v -> {

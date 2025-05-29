@@ -10,7 +10,6 @@ import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -52,28 +51,27 @@ public class MainActivity extends AppCompatActivity {
         Button deleteCourseButton = findViewById(R.id.delete_course_button);
         Button logoutButton = findViewById(R.id.logout_button);
 
-        // 统一使用"username"作为键
         viewCourseButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ViewActivity.class);
-            intent.putExtra("username", currentUsername); // 修正为"username"
+            intent.putExtra("username", currentUsername);
             startActivity(intent);
         });
 
         addCourseButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddActivity.class);
-            intent.putExtra("username", currentUsername); // 修正为"username"
+            intent.putExtra("username", currentUsername);
             startActivity(intent);
         });
 
         modifyCourseButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ChangeActivity.class);
-            intent.putExtra("username", currentUsername); // 修正为"username"
+            intent.putExtra("username", currentUsername);
             startActivity(intent);
         });
 
         deleteCourseButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, DeleteActivity.class);
-            intent.putExtra("username", currentUsername); // 修正为"username"
+            intent.putExtra("username", currentUsername);
             startActivity(intent);
         });
 
@@ -82,8 +80,6 @@ public class MainActivity extends AppCompatActivity {
             finish();
         });
     }
-
-    // 删除无用的getUserId方法
 
     private void loadTodayCourses() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
