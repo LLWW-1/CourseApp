@@ -23,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
     private ListView courseListView;
     private CourseAdapter courseAdapter;
     private List<Course> todayCourses = new ArrayList<>();
-    private String currentUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +30,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         dbHelper = new DBHelper(this);
-        currentUsername = getIntent().getStringExtra("username");
-
-        if (currentUsername == null || currentUsername.isEmpty()) {
-            Toast.makeText(this, "用户名无效，请重新登录", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
 
         courseListView = findViewById(R.id.course_list_view);
         setupButtons();
@@ -49,35 +41,25 @@ public class MainActivity extends AppCompatActivity {
         Button addCourseButton = findViewById(R.id.add_course_button);
         Button modifyCourseButton = findViewById(R.id.modify_course_button);
         Button deleteCourseButton = findViewById(R.id.delete_course_button);
-        Button logoutButton = findViewById(R.id.logout_button);
 
         viewCourseButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ViewActivity.class);
-            intent.putExtra("username", currentUsername);
             startActivity(intent);
         });
 
         addCourseButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddActivity.class);
-            intent.putExtra("username", currentUsername);
             startActivity(intent);
         });
 
         modifyCourseButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ChangeActivity.class);
-            intent.putExtra("username", currentUsername);
             startActivity(intent);
         });
 
         deleteCourseButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, DeleteActivity.class);
-            intent.putExtra("username", currentUsername);
             startActivity(intent);
-        });
-
-        logoutButton.setOnClickListener(v -> {
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            finish();
         });
     }
 
@@ -92,9 +74,9 @@ public class MainActivity extends AppCompatActivity {
             today = today - 1;
         }
 
-        String[] columns = {"course_name", "teacher_name", "start_time", "end_time", "location"};
-        String selection = "username =? AND weekday =?";
-        String[] selectionArgs = {currentUsername, String.valueOf(today)};
+        String[] columns = {"course_name", "teacher_name", "start_time", "end_time", "location", "weekday"};
+        String selection = "weekday =?";
+        String[] selectionArgs = {String.valueOf(today)};
         Cursor cursor = db.query("Course", columns, selection, selectionArgs, null, null, "start_time");
 
         todayCourses.clear();
@@ -104,7 +86,8 @@ public class MainActivity extends AppCompatActivity {
             String startTime = cursor.getString(2);
             String endTime = cursor.getString(3);
             String location = cursor.getString(4);
-            Course course = new Course(currentUsername, courseName, teacherName, startTime, endTime, location, today);
+            int weekday = cursor.getInt(5);
+            Course course = new Course("", courseName, teacherName, startTime, endTime, location, weekday); // 第一个参数设为空
             todayCourses.add(course);
         }
         cursor.close();

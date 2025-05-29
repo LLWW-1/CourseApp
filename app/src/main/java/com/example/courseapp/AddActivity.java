@@ -17,14 +17,12 @@ public class AddActivity extends AppCompatActivity {
     private EditText courseNameEditText, teacherNameEditText, startTimeEditText, endTimeEditText, locationEditText;
     private Spinner weekdaySpinner;
     private Button addButton;
-    private String currentUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
 
-        currentUsername = getIntent().getStringExtra("username");
         dbHelper = new DBHelper(this);
         courseNameEditText = findViewById(R.id.course_name_edit_text);
         teacherNameEditText = findViewById(R.id.teacher_name_edit_text);
@@ -51,7 +49,6 @@ public class AddActivity extends AppCompatActivity {
 
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
                 ContentValues values = new ContentValues();
-                values.put("username", currentUsername);
                 values.put("course_name", courseName);
                 values.put("teacher_name", teacherName);
                 values.put("start_time", startTime);
@@ -63,7 +60,6 @@ public class AddActivity extends AppCompatActivity {
 
                 Toast.makeText(AddActivity.this, "课程添加成功", Toast.LENGTH_SHORT).show();
                 Intent intent=new Intent(AddActivity.this,MainActivity.class);
-                intent.putExtra("username",currentUsername);
                 startActivity(intent);
                 finish();
             }

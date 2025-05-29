@@ -18,7 +18,6 @@ public class ChangeActivity extends AppCompatActivity {
     private EditText courseNameEditText, teacherNameEditText, startTimeEditText, endTimeEditText, locationEditText;
     private Spinner weekdaySpinner;
     private Button changeButton;
-    private String currentUsername;
     private String courseName;
 
     @Override
@@ -26,7 +25,6 @@ public class ChangeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change);
 
-        currentUsername = getIntent().getStringExtra("username");
         courseName = getIntent().getStringExtra("course_name");
 
         dbHelper = new DBHelper(this);
@@ -66,8 +64,8 @@ public class ChangeActivity extends AppCompatActivity {
                 values.put("location", location);
                 values.put("weekday", weekday);
 
-                String whereClause = "course_name =? AND username =?";
-                String[] whereArgs = {courseName, currentUsername};
+                String whereClause = "course_name =?";
+                String[] whereArgs = {courseName};
 
                 int rowsAffected = db.update("Course", values, whereClause, whereArgs);
                 db.close();
@@ -75,7 +73,6 @@ public class ChangeActivity extends AppCompatActivity {
                 if (rowsAffected > 0) {
                     Toast.makeText(ChangeActivity.this, "课程修改成功", Toast.LENGTH_SHORT).show();
                     Intent intent=new Intent(ChangeActivity.this,MainActivity.class);
-                    intent.putExtra("username",currentUsername);
                     startActivity(intent);
                     finish();
                 } else {
@@ -88,8 +85,8 @@ public class ChangeActivity extends AppCompatActivity {
     private void loadCourseDetails() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String[] columns = {"course_name", "teacher_name", "start_time", "end_time", "location", "weekday"};
-        String selection = "course_name =? AND username =?";
-        String[] selectionArgs = {courseName, currentUsername};
+        String selection = "course_name =?";
+        String[] selectionArgs = {courseName};
         Cursor cursor = db.query("Course", columns, selection, selectionArgs, null, null, null);
 
         if (cursor.moveToFirst()) {

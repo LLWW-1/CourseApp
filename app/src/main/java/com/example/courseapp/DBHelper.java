@@ -14,23 +14,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // User表：使用username作为主键
-        String createUserTable = "CREATE TABLE User (" +
-                "username TEXT PRIMARY KEY NOT NULL," +
-                "password TEXT NOT NULL)";
 
         // Course表：使用course_name作为主键，引用User.username
         String createCourseTable = "CREATE TABLE Course (" +
                 "course_name TEXT PRIMARY KEY NOT NULL," +
-                "username TEXT NOT NULL," +
                 "teacher_name TEXT," +
                 "start_time TEXT," +
                 "end_time TEXT," +
                 "location TEXT," +
-                "weekday INTEGER," +
-                "FOREIGN KEY (username) REFERENCES User(username))";
+                "weekday INTEGER)";
 
-        db.execSQL(createUserTable);
         db.execSQL(createCourseTable);
     }
 

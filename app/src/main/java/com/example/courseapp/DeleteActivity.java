@@ -14,14 +14,12 @@ public class DeleteActivity extends AppCompatActivity {
     private DBHelper dbHelper;
     private EditText courseNameEditText;
     private Button deleteButton;
-    private String currentUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delete);
 
-        currentUsername = getIntent().getStringExtra("username");
         dbHelper = new DBHelper(this);
         courseNameEditText = findViewById(R.id.course_name_edit_text);
         deleteButton = findViewById(R.id.delete_button);
@@ -35,8 +33,8 @@ public class DeleteActivity extends AppCompatActivity {
 
             try {
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
-                String whereClause = "course_name =? AND username =?";
-                String[] whereArgs = {courseName, currentUsername};
+                String whereClause = "course_name =?";
+                String[] whereArgs = {courseName};
 
                 int rowsDeleted = db.delete("Course", whereClause, whereArgs);
                 db.close();
@@ -44,7 +42,6 @@ public class DeleteActivity extends AppCompatActivity {
                 if (rowsDeleted > 0) {
                     Toast.makeText(this, "课程删除成功", Toast.LENGTH_SHORT).show();
                     Intent intent=new Intent(DeleteActivity.this,MainActivity.class);
-                    intent.putExtra("username",currentUsername);
                     startActivity(intent);
                     finish();
                 } else {
