@@ -89,7 +89,7 @@ public class ViewActivity extends AppCompatActivity {
         textView.setText(text);
         textView.setTextSize(16);
         textView.setPadding(16, 16, 16, 16);
-        textView.setBackgroundColor(Color.parseColor("#3F51B5")); // 深蓝色背景
+        textView.setBackgroundColor(Color.parseColor("#9E9E9E")); // 灰背景
         textView.setTextColor(Color.WHITE);
         row.addView(textView);
     }
