@@ -3,21 +3,13 @@ package com.example.courseapp;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import java.util.Collections;
-import java.util.Comparator;
-
-import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
+import java.util.Calendar;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,8 +24,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         dbHelper = new DBHelper(this);
-
         courseListView = findViewById(R.id.course_list_view);
+
         setupButtons();
         loadTodayCourses();
         setupCourseListView();
@@ -44,32 +36,11 @@ public class MainActivity extends AppCompatActivity {
         Button addCourseButton = findViewById(R.id.add_course_button);
 
         viewCourseButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ViewActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(this, ViewActivity.class));
         });
 
         addCourseButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, AddActivity.class);
-            startActivity(intent);
-        });
-    }
-
-    private void setupCourseListView() {
-        courseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Course course = todayCourses.get(position);
-                Intent intent = new Intent(MainActivity.this, EditActivity.class);
-
-                // 将课程信息全部放入Intent
-                intent.putExtra("course_name", course.getCourseName());
-                intent.putExtra("teacher_name", course.getTeacherName());
-                intent.putExtra("start_time", course.getStartTime());
-                intent.putExtra("end_time", course.getEndTime());
-                intent.putExtra("location", course.getLocation());
-                intent.putExtra("weekday", course.getWeekday());
-                startActivity(intent);
-            }
+            startActivity(new Intent(this, AddActivity.class));
         });
     }
 
@@ -78,50 +49,58 @@ public class MainActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         int today = calendar.get(Calendar.DAY_OF_WEEK);
 
-        if (today == Calendar.SUNDAY) {
-            today = 7;
-        } else {
-            today = today - 1;
-        }
+        // 转换为1-7(周一至周日)
+        today = today == Calendar.SUNDAY ? 7 : today - 1;
 
         String[] columns = {"course_name", "teacher_name", "start_time", "end_time", "location", "weekday"};
         String selection = "weekday =?";
         String[] selectionArgs = {String.valueOf(today)};
+
         Cursor cursor = db.query("Course", columns, selection, selectionArgs, null, null, "start_time");
 
         todayCourses.clear();
         while (cursor.moveToNext()) {
-            String courseName = cursor.getString(0);
-            String teacherName = cursor.getString(1);
-            String startTime = cursor.getString(2);
-            String endTime = cursor.getString(3);
-            String location = cursor.getString(4);
-            int weekday = cursor.getInt(5);
-            Course course = new Course(courseName, teacherName, startTime, endTime, location, weekday); // 第一个参数设为空
-            todayCourses.add(course);
+            todayCourses.add(new Course(
+                    cursor.getString(0),
+                    cursor.getString(1),
+                    cursor.getInt(2),
+                    cursor.getInt(3),
+                    cursor.getString(4),
+                    cursor.getInt(5)
+            ));
         }
+
         cursor.close();
         db.close();
-
-        // 对todayCourses列表按照课程开始时间进行排序
-        Collections.sort(todayCourses, new Comparator<Course>() {
-            @Override
-            public int compare(Course course1, Course course2) {
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                try {
-                    return sdf.parse(course1.getStartTime()).compareTo(sdf.parse(course2.getStartTime()));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return 0;
-                }
-            }
-        });
 
         if (todayCourses.isEmpty()) {
             Toast.makeText(this, "今日没有课程", Toast.LENGTH_SHORT).show();
         }
+    }
 
+    private void setupCourseListView() {
         courseAdapter = new CourseAdapter(this, todayCourses);
         courseListView.setAdapter(courseAdapter);
+
+        courseListView.setOnItemClickListener((parent, view, position, id) -> {
+            Course course = todayCourses.get(position);
+            Intent intent = new Intent(this, EditActivity.class);
+
+            intent.putExtra("course_name", course.getCourseName());
+            intent.putExtra("teacher_name", course.getTeacherName());
+            intent.putExtra("start_time", course.getStartTime());
+            intent.putExtra("end_time", course.getEndTime());
+            intent.putExtra("location", course.getLocation());
+            intent.putExtra("weekday", course.getWeekday());
+
+            startActivity(intent);
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadTodayCourses();
+        courseAdapter.notifyDataSetChanged();
     }
 }

@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "course.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2; // 版本号增加
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -14,13 +14,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
-        // Course表：使用course_name作为主键
         String createCourseTable = "CREATE TABLE Course (" +
                 "course_name TEXT PRIMARY KEY NOT NULL," +
                 "teacher_name TEXT," +
-                "start_time TEXT," +
-                "end_time TEXT," +
+                "start_time INTEGER," +  // 改为整数类型，存储节数
+                "end_time INTEGER," +    // 改为整数类型，存储节数
                 "location TEXT," +
                 "weekday INTEGER)";
 
@@ -29,7 +27,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS User");
+        // 简单处理：删除旧表，创建新表
         db.execSQL("DROP TABLE IF EXISTS Course");
         onCreate(db);
     }

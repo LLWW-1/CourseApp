@@ -11,20 +11,21 @@
         android:text="今日课程"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginTop="48dp"
+        android:layout_gravity="center_horizontal"/>
 
     <ListView
         android:id="@+id/course_list_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:layout_marginTop="16dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginBottom="48dp"
         android:layout_marginTop="16dp">
 
         <Button
@@ -32,9 +33,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="查看课程表"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="24dp"/>
+            android:text="查看课程表"/>
 
         <Button
             android:id="@+id/add_course_button"
@@ -42,9 +41,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="添加课程"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginLeft="8dp"/>
     </LinearLayout>
-
 </LinearLayout>
