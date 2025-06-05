@@ -8,6 +8,8 @@ import java.util.Comparator;
 
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -34,13 +36,12 @@ public class MainActivity extends AppCompatActivity {
         courseListView = findViewById(R.id.course_list_view);
         setupButtons();
         loadTodayCourses();
+        setupCourseListView();
     }
 
     private void setupButtons() {
         Button viewCourseButton = findViewById(R.id.view_course_button);
         Button addCourseButton = findViewById(R.id.add_course_button);
-        Button modifyCourseButton = findViewById(R.id.modify_course_button);
-        Button deleteCourseButton = findViewById(R.id.delete_course_button);
 
         viewCourseButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ViewActivity.class);
@@ -51,15 +52,24 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, AddActivity.class);
             startActivity(intent);
         });
+    }
 
-        modifyCourseButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ChangeActivity.class);
-            startActivity(intent);
-        });
+    private void setupCourseListView() {
+        courseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Course course = todayCourses.get(position);
+                Intent intent = new Intent(MainActivity.this, EditActivity.class);
 
-        deleteCourseButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, DeleteActivity.class);
-            startActivity(intent);
+                // 将课程信息全部放入Intent
+                intent.putExtra("course_name", course.getCourseName());
+                intent.putExtra("teacher_name", course.getTeacherName());
+                intent.putExtra("start_time", course.getStartTime());
+                intent.putExtra("end_time", course.getEndTime());
+                intent.putExtra("location", course.getLocation());
+                intent.putExtra("weekday", course.getWeekday());
+                startActivity(intent);
+            }
         });
     }
 
@@ -87,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             String endTime = cursor.getString(3);
             String location = cursor.getString(4);
             int weekday = cursor.getInt(5);
-            Course course = new Course("", courseName, teacherName, startTime, endTime, location, weekday); // 第一个参数设为空
+            Course course = new Course(courseName, teacherName, startTime, endTime, location, weekday); // 第一个参数设为空
             todayCourses.add(course);
         }
         cursor.close();

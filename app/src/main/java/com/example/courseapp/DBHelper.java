@@ -15,7 +15,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        // Course表：使用course_name作为主键，引用User.username
+        // Course表：使用course_name作为主键
         String createCourseTable = "CREATE TABLE Course (" +
                 "course_name TEXT PRIMARY KEY NOT NULL," +
                 "teacher_name TEXT," +

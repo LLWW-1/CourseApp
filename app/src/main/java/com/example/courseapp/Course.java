@@ -1,8 +1,6 @@
 package com.example.courseapp;
 import java.io.Serializable;
 
-import java.io.Serializable;
-
 public class Course implements Serializable {
     private String courseName;
     private String teacherName;
@@ -11,7 +9,7 @@ public class Course implements Serializable {
     private String location;
     private int weekday;
 
-    public Course(String username,String courseName, String teacherName, String startTime, String endTime, String location, int weekday) {
+    public Course(String courseName, String teacherName, String startTime, String endTime, String location, int weekday) {
         this.courseName = courseName;
         this.teacherName = teacherName;
         this.startTime = startTime;
