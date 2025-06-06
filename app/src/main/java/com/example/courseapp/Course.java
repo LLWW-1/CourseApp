@@ -5,8 +5,8 @@ import java.io.Serializable;
 public class Course implements Serializable {
     private String courseName;
     private String teacherName;
-    private int startTime;  // 改为整数
-    private int endTime;    // 改为整数
+    private int startTime;  //整数表示节数
+    private int endTime;
     private String location;
     private int weekday;
 
@@ -20,7 +20,6 @@ public class Course implements Serializable {
         this.weekday = weekday;
     }
 
-    // Getter和Setter方法保持不变
     public String getCourseName() { return courseName; }
     public void setCourseName(String courseName) { this.courseName = courseName; }
     public String getTeacherName() { return teacherName; }

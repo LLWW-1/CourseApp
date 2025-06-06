@@ -25,11 +25,7 @@ public class CourseAdapter extends ArrayAdapter<Course> {
         TextView text2 = convertView.findViewById(android.R.id.text2);
 
         text1.setText(course.getCourseName());
-        text2.setText(String.format("%s | %d-%d节 | %s",
-                course.getTeacherName(),
-                course.getStartTime(),
-                course.getEndTime(),
-                course.getLocation()));
+        text2.setText(String.format("%s | %d-%d节 | %s", course.getTeacherName(), course.getStartTime(), course.getEndTime(), course.getLocation()));
 
         return convertView;
     }
